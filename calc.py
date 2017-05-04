@@ -1,15 +1,16 @@
+import os
 
 # Uncomment this to hide all the ugly status messages
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL']='3'
+#os.environ['TF_CPP_MIN_LOG_LEVEL']='3'
 
 # Uncomment this to run on the CPU only
-#os.environ['CUDA_VISIBLE_DEVICES']=''
+os.environ['CUDA_VISIBLE_DEVICES']=''
 
 import tensorflow as tf
 import numpy as np
 import h5py
 import sys
+from tqdm import tqdm
 from scipy.spatial.distance import pdist
 import pandas as pd
 
@@ -66,7 +67,7 @@ def minimize_thompson(N, reported_U=None, limit=10**10):
         sess.run(init)
 
         for n in xrange(limit):
-            for _ in range(100):
+            for _ in tqdm(range(100)):
                 sess.run(opt, feed_dict={LR:learning_rate})
 
             u = sess.run(U)
