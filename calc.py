@@ -20,6 +20,8 @@ in order. Saves best configurations to "configurations.h5". If a known
 solution exists, problem continues to run until it is found.
 '''
 
+FLAG_TRY_TO_MATCH_KNOWN = True
+
 f_h5 = 'configurations.h5'
 
 
@@ -123,7 +125,7 @@ with h5py.File(f_h5,'r+') as h5:
                 model_u = (1/pdist(c)).sum()
                 delta_u = (model_u - wiki_u)
 
-                if delta_u < 0:
+                if delta_u < 0 or not FLAG_TRY_TO_MATCH_KNOWN:
                     print "Current energy is lower than known", N, delta_u
                     break
 
