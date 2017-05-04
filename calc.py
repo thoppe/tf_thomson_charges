@@ -68,8 +68,10 @@ def minimize_thompson(N, reported_U=None, limit=10**10):
         init = tf.global_variables_initializer()
         sess.run(init)
 
+        print " iteration / N / U_current / delta / learning rate"
+
         for n in xrange(limit):
-            for _ in tqdm(range(100)):
+            for _ in range(100):
                 sess.run(opt, feed_dict={LR:learning_rate})
 
             u = sess.run(U)
