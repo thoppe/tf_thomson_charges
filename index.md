@@ -2,7 +2,7 @@
 @unsplash(RdmLSJR-tq8) .light
 
 @h1 Stupid TensorFlow Tricks
-@h3 A new take on an old (Thomson) problem
+@h4 A new take on an old (Thomson) problem
   
 @footer @div .wrap @div .span
  @button(href="https://github.com/thoppe/tf_thomson_charges") .alignleft .ghost
@@ -102,9 +102,11 @@ def minimize_thompson(N):
 	| @figure(src="images/charges2.gif") 100 charges
 	| @figure(src="images/charges1.gif") 625 charges
 	
----- .bg-black
+---- .bg-black 
 
-.wrap 
+@unsplash(qDY9ahp0Mto)
+
+.wrap .content-right
    @h3 Does it always work?
    **NO!** When N gets large there are an exponentially large amount of stable configurations that aren't the minima.
    <br><br>
@@ -113,10 +115,6 @@ def minimize_thompson(N):
    <br><br>
    @h3 Is it useful?
    **EH.** The solution to the Thomson problem isn't exciting _per se_ but new solutions often give insight into minimization problems. This is more of an example of a novel use of TensorFlow.
-
-
-
-
 
 ----- .bg-apple
 
