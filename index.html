@@ -103,7 +103,7 @@
       Project repo
      </text>
     </a>
-    <a class="button alignleft ghost" href="https://github.com/thoppe/tf_thomson_charges">
+    <a class="button alignleft ghost" href="https://medium.com/towards-data-science/stupid-tensorflow-tricks-3a837194b7a0">
      <text>
       <i aria-hidden="true" class="fa fa-medium">
       </i>
@@ -143,6 +143,144 @@
    </figure>
   </div>
  </h4>
+</section><section class="bg-black slide-top slide" id="slide-number-3">
+ <h1>
+  <text>
+   What is the Thomson problem?
+  </text>
+ </h1>
+ <h2>
+  <text>
+   <div class="equation" data-expr="U = \sum_{i}^N \sum_{i&gt;j}^N \frac{1}{r_{ij}}">
+   </div>
+  </text>
+ </h2>
+ <h4 class="grid">
+  <div class="column">
+   <text>
+    The objective of the
+    <a href="https://en.wikipedia.org/wiki/Thomson_problem">
+     Thomson problem
+    </a>
+    is to determine the minimum electrostatic potential energy configuration of N electrons constrained to the surface of a unit sphere that repel each other with a force given by Coulomb's law.
+   </text>
+  </div>
+  <div class="column">
+   <figure>
+    <img src="images/N_2_to_5_ThomsonSolutions.png" style="height:400px"/>
+   </figure>
+  </div>
+ </h4>
+</section><section class="wrap slide" id="slide-number-4">
+ <h2>
+  <ul class="markdownlist">
+   <li>
+    <text>
+     Can we use Tensorflow to
+    </text>
+   </li>
+   <li>
+    <text>
+     solve the Thomson problem?
+    </text>
+   </li>
+  </ul>
+ </h2>
+ <text>
+  Spoiler alert: Yes! And it works well!
+ </text>
+</section><section class="wrap slide" id="slide-number-5">
+ <h3>
+  <text>
+   Build a model ...
+  </text>
+ </h3>
+ <pre class="prettyprint">def thompson_model(N):
+    tf.reset_default_graph()
+    # Start with random coordinates from a normal dist
+    r0 = np.random.normal(size=[N,3])
+    coord = tf.Variable(r0, name='coordinates')
+    # Normalize the coordinates onto the unit sphere
+    coord = coord/tf.reshape(tf.norm(coord,axis=1),(-1,1))
+    def squared_diff(A):
+        r = tf.reduce_sum(A*A, 1)
+        r = tf.reshape(r, [-1, 1])
+        return r - 2*tf.matmul(A, tf.transpose(A)) + tf.transpose(r)
+    RR = squared_diff(coord)
+    # We don't need to compute the gradient over the symmetric distance
+    # matrix, only the upper right half
+    mask = np.triu(np.ones((N, N), dtype=np.bool_), 1)
+    R = tf.sqrt(tf.boolean_mask(RR, mask))
+    # Electostatic potential up to a constant, 1/r
+    U = tf.reduce_sum(1/R)
+    return U, coord</pre>
+</section><section class="wrap slide" id="slide-number-6">
+ <h3>
+  <text>
+   Minimize the energy
+  </text>
+ </h3>
+ <pre class="prettyprint">def minimize_thompson(N, reported_U=None, limit=10**10):
+    U, coord = thompson_model(N)
+    learning_rate = 0.1
+    LR = tf.placeholder(tf.float64, shape=[])
+    opt = tf.train.AdamOptimizer(learning_rate=LR).minimize(U)
+    with tf.Session() as sess:
+        init = tf.global_variables_initializer()
+        sess.run(init)
+        for n in xrange(limit):
+            for _ in range(100):
+                sess.run(opt, feed_dict={LR:learning_rate})
+            # Even ADAM gets stuck, slowly decay the learning rate
+            learning_rate *= 0.96</pre>
+</section><section class="bg-apple slide" id="slide-number-7">
+ <h1 class="text-data">
+  <text>
+   Thanks, you!
+  </text>
+ </h1>
+ <text>
+  <br>
+   <br/>
+  </br>
+ </text>
+ <h2>
+  <ul class="markdownlist">
+   <li>
+    <text>
+     Thoughts? Ideas?
+    </text>
+   </li>
+   <li>
+    <text>
+     <a href='href="https://twitter.com/metasemantic"'>
+      @metasemantic
+     </a>
+    </text>
+   </li>
+  </ul>
+ </h2>
+ <text>
+  <br>
+   <br/>
+  </br>
+ </text>
+ <h2>
+  <ul class="markdownlist">
+   <li>
+    <text>
+     Want to read more? Read on medium.com:
+    </text>
+   </li>
+   <li>
+    <text>
+     <a href="https://medium.com/towards-data-science/stupid-tensorflow-tricks-3a837194b7a0">
+      Stupid TensorFlow Tricks
+     </a>
+    </text>
+   </li>
+  </ul>
+ </h2>
 </section>
    </article>
   </main>
