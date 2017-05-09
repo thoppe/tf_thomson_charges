@@ -33,14 +33,14 @@
 ---- .wrap
 
 @h2 
-     + Can we use Tensorflow to
+     + Can we use TensorFlow to
      + solve the Thomson problem?
      
-Spoiler alert: Yes! And it works well!
+Spoiler alert: Yes!
 
 ---- .wrap
 
-@h3 Build a model ...
+@h3 Build a model
 ```
 def thompson_model(N):
     tf.reset_default_graph()
@@ -65,7 +65,7 @@ def thompson_model(N):
 
     R = tf.sqrt(tf.boolean_mask(RR, mask))
 
-    # Electostatic potential up to a constant, 1/r
+    # Electrostatic potential up to a constant, 1/r
     U = tf.reduce_sum(1/R)
 
     return U, coord
@@ -75,7 +75,7 @@ def thompson_model(N):
 @h3 Minimize the energy
 
 ```
-def minimize_thompson(N, reported_U=None, limit=10**10):
+def minimize_thompson(N):
     
     U, coord = thompson_model(N)
 
@@ -87,7 +87,7 @@ def minimize_thompson(N, reported_U=None, limit=10**10):
         init = tf.global_variables_initializer()
         sess.run(init)
 
-        for n in xrange(limit):
+        for n in xrange(50):
             for _ in range(100):
                 sess.run(opt, feed_dict={LR:learning_rate})
 
@@ -95,6 +95,28 @@ def minimize_thompson(N, reported_U=None, limit=10**10):
             learning_rate *= 0.96
 
 ```
+---- .wrap .slide-top
+
+@h3 Make pictures
+.grid
+	| @figure(src="images/charges2.gif") 100 charges
+	| @figure(src="images/charges1.gif") 625 charges
+	
+---- .bg-black
+
+.wrap 
+   @h3 Does it always work?
+   **NO!** When N gets large there are an exponentially large amount of stable configurations that aren't the minima.
+   <br><br>
+   @h3 Does TensorFlow make it faster?
+   **YES!** TensorFlow on a GPU is 10x faster than the 4-cores on a CPU (tested at N=4000)
+   <br><br>
+   @h3 Is it useful?
+   **EH.** The solution to the Thomson problem isn't exciting _per se_ but new solutions often give insight into minimization problems. This is more of an example of a novel use of TensorFlow.
+
+
+
+
 
 ----- .bg-apple
 

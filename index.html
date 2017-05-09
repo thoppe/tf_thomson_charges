@@ -176,7 +176,7 @@
   <ul class="markdownlist">
    <li>
     <text>
-     Can we use Tensorflow to
+     Can we use TensorFlow to
     </text>
    </li>
    <li>
@@ -187,12 +187,12 @@
   </ul>
  </h2>
  <text>
-  Spoiler alert: Yes! And it works well!
+  Spoiler alert: Yes!
  </text>
 </section><section class="wrap slide" id="slide-number-5">
  <h3>
   <text>
-   Build a model ...
+   Build a model
   </text>
  </h3>
  <pre class="prettyprint">def thompson_model(N):
@@ -211,7 +211,7 @@
     # matrix, only the upper right half
     mask = np.triu(np.ones((N, N), dtype=np.bool_), 1)
     R = tf.sqrt(tf.boolean_mask(RR, mask))
-    # Electostatic potential up to a constant, 1/r
+    # Electrostatic potential up to a constant, 1/r
     U = tf.reduce_sum(1/R)
     return U, coord</pre>
 </section><section class="wrap slide" id="slide-number-6">
@@ -220,7 +220,7 @@
    Minimize the energy
   </text>
  </h3>
- <pre class="prettyprint">def minimize_thompson(N, reported_U=None, limit=10**10):
+ <pre class="prettyprint">def minimize_thompson(N):
     U, coord = thompson_model(N)
     learning_rate = 0.1
     LR = tf.placeholder(tf.float64, shape=[])
@@ -228,12 +228,98 @@
     with tf.Session() as sess:
         init = tf.global_variables_initializer()
         sess.run(init)
-        for n in xrange(limit):
+        for n in xrange(50):
             for _ in range(100):
                 sess.run(opt, feed_dict={LR:learning_rate})
             # Even ADAM gets stuck, slowly decay the learning rate
             learning_rate *= 0.96</pre>
-</section><section class="bg-apple slide" id="slide-number-7">
+</section><section class="wrap slide-top slide" id="slide-number-7">
+ <h3>
+  <text>
+   Make pictures
+  </text>
+ </h3>
+ <div class="grid">
+  <div class="column">
+   <figure>
+    <img src="images/charges2.gif" style=""/>
+    <figcaption>
+     <html>
+      <body>
+       <p>
+        100 charges
+       </p>
+      </body>
+     </html>
+    </figcaption>
+   </figure>
+  </div>
+  <div class="column">
+   <figure>
+    <img src="images/charges1.gif" style=""/>
+    <figcaption>
+     <html>
+      <body>
+       <p>
+        625 charges
+       </p>
+      </body>
+     </html>
+    </figcaption>
+   </figure>
+  </div>
+ </div>
+</section><section class="bg-black slide" id="slide-number-8">
+ <div class="wrap">
+  <h3>
+   <text>
+    Does it always work?
+   </text>
+  </h3>
+  <text>
+   <strong>
+    NO!
+   </strong>
+   When N gets large there are an exponentially large amount of stable configurations that aren't the minima.
+  </text>
+  <text>
+   <br>
+    <br/>
+   </br>
+  </text>
+  <h3>
+   <text>
+    Does TensorFlow make it faster?
+   </text>
+  </h3>
+  <text>
+   <strong>
+    YES!
+   </strong>
+   TensorFlow on a GPU is 10x faster than the 4-cores on a CPU (tested at N=4000)
+  </text>
+  <text>
+   <br>
+    <br/>
+   </br>
+  </text>
+  <h3>
+   <text>
+    Is it useful?
+   </text>
+  </h3>
+  <text>
+   <strong>
+    EH.
+   </strong>
+   The solution to the Thomson problem isn't exciting
+   <em>
+    per se
+   </em>
+   but new solutions often give insight into minimization problems. This is more of an example of a novel use of TensorFlow.
+  </text>
+ </div>
+</section><section class="bg-apple slide" id="slide-number-9">
  <h1 class="text-data">
   <text>
    Thanks, you!
