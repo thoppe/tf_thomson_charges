@@ -12,3 +12,7 @@ Once you've solved the model up to $N=100$ you can make an animation with
 
     python draw_movie.py
 
+
+## Slides
+
+[http://thoppe.github.io/tf_thomson_charges/index.html](http://thoppe.github.io/tf_thomson_charges/index.html)
